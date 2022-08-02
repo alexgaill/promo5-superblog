@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use App\Services\File\SaveFile;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,14 +43,7 @@ class PostController extends AbstractController
             // On récupère un objet UploadedFile du formulaire
             $picture = $form->get('picture')->getData();
 
-            // On créé un nom unique pour chaque image en concaténant l'extension du fichier
-            $pictureName = md5(uniqid()) . '.' . $picture->guessExtension();
-
-            // On enregsitre le fichier d'image dans un dossier img
-            $picture->move(
-                $this->getParameter('upload_file'),// Le dossier dans lequel est déplacé le fichier
-                $pictureName// Le nom du fichier
-            );
+            $pictureName = (new SaveFile)->saveUploadedFile($picture, $this->getParameter('upload_file'));
             // On enregistre en BDD le nom de l'image
             $post->setPicture($pictureName)
                 ->setCreatedAt(new DateTime());
@@ -65,9 +59,48 @@ class PostController extends AbstractController
 
     }
 
-    // Ajouter un post
+    #[Route('/post/{id}/update', name: 'update_post', methods:['GET', 'POST'], requirements:['id' => "\d+"])]
+    public function update(Post $post, Request $request): Response
+    {
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
 
-    // Modifier un post
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Si on a une ancienne image on la stocke
+            $oldPicture = $post->getPicture() ? $post->getPicture() : null;
+            // On stocke la nouvelle image reçue si on en a une
+            $picture = $form->get('picture')->getData() ? $form->get('picture')->getData() : null;
 
-    // Supprimmer un post
+            // Une ancienne image & pas de nouvelle
+            // Une ancienne image et une nouvelle
+            // Pas d'ancienne image et une nouvelle
+            if ($picture) {
+                $pictureName = (new SaveFile)->saveUploadedFile($picture, $this->getParameter('upload_file'));
+                $post->setPicture($pictureName);
+                if ($oldPicture) {
+                    // On supprime l'ancienne image
+                    try {
+                        unlink($this->getParameter('upload_file').'/'. $oldPicture);
+                    } catch (\Throwable $th) {
+                    }
+                }
+            }
+            //  elseif ($oldPicture) {
+            //     $post->setPicture($oldPicture);
+            // }
+            $this->repository->add($post, true);
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->renderForm('post/add.html.twig', [
+            'form' => $form
+        ]);
+    }
+
+    #[Route('/post/{id}/delete', name:'delete_post', methods:['GET'], requirements:['id' => "\d+"])]
+    public function delete(Post $post):Response
+    {
+        $this->repository->remove($post, true);
+        return $this->redirectToRoute('app_home');
+    }
 }

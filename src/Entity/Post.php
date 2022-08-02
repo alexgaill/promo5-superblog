@@ -6,7 +6,10 @@ use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostRepository::class)]
+#[
+    ORM\Entity(repositoryClass: PostRepository::class),
+    ORM\HasLifecycleCallbacks
+]
 class Post
 {
     #[ORM\Id]
@@ -93,5 +96,13 @@ class Post
         $this->picture = $picture;
 
         return $this;
+    }
+
+    #[ORM\PostRemove]
+    public function deletePicture()
+    {
+        if (file_exists(__DIR__ .'/../../public/assets/img/upload/' . $this->picture)) {
+            unlink(__DIR__ .'/../../public/assets/img/upload/' . $this->picture);
+        }
     }
 }
