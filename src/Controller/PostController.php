@@ -50,6 +50,7 @@ class PostController extends AbstractController
 
             $this->repository->add($post, true);
             
+            $this->addFlash('success', "L'article ". $post->getTitle() ." a bien été ajouté.");
             return $this->redirectToRoute('app_home');
         }
 
@@ -82,6 +83,7 @@ class PostController extends AbstractController
                     try {
                         unlink($this->getParameter('upload_file').'/'. $oldPicture);
                     } catch (\Throwable $th) {
+                        $this->addFlash('warning', "L'ancienne image '$oldPicture' n'a pas été supprimée!");
                     }
                 }
             }
@@ -92,7 +94,7 @@ class PostController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
-        return $this->renderForm('post/add.html.twig', [
+        return $this->renderForm('post/update.html.twig', [
             'form' => $form
         ]);
     }
@@ -101,6 +103,7 @@ class PostController extends AbstractController
     public function delete(Post $post):Response
     {
         $this->repository->remove($post, true);
+        $this->addFlash('success', "L'article '". $post->getTitle() ."' a bien été supprimé");
         return $this->redirectToRoute('app_home');
     }
 }

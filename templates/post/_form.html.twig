@@ -1,0 +1,14 @@
+{{ form_start(form) }}
+    <div class="row">
+        <div class="col-6">
+            {{ form_row(form.title) }}
+            {{ form_row(form.content) }}
+        </div>
+        <div class="col-6">
+            {{ form_row(form.category) }}
+            {{ form_row(form.picture) }}
+        </div>
+
+        {{ form_row(form.submit,{label: submitLabel|default("Envoyer")}) }}
+    </div>
+{{ form_end(form) }}

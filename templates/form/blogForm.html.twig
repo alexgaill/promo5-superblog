@@ -1,0 +1,22 @@
+{% block text_row %}
+	<div class="my4 bg-primary">
+		{% block text_label %}
+			<label class="text-secondary">{{label}}</label>
+		{% endblock %}
+		{% block text_widget %}
+			<input type="text" name="{{name}}" value="{{value}}">
+		{% endblock %}
+	</div>
+{% endblock %}
+{% block textarea_row %}
+	<div class="my4 bg-primary">
+		{% block textarea_label %}
+			<label class="text-secondary">{{label}}</label>
+		{% endblock %}
+		{% block textarea_widget %}
+			<textarea type="text" name="{{name}}" rows='6' cols='30'>
+				{{value}}
+			</textarea>
+		{% endblock %}
+	</div>
+{% endblock %}
