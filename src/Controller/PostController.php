@@ -23,11 +23,13 @@ class PostController extends AbstractController
         $this->repository = $manager->getRepository(Post::class);
     }
 
-    #[Route('/post', name: 'app_post')]
-    public function index(): Response
+    #[Route('/post', name: 'app_post', methods:['GET'])]
+    public function index(Request $request): Response
     {
+        $posts = $this->repository->search($request->query->get('search'));
+
         return $this->render('post/index.html.twig', [
-            'controller_name' => 'PostController',
+            'posts' => $posts
         ]);
     }
 

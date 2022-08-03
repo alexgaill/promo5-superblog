@@ -39,6 +39,25 @@ class PostRepository extends ServiceEntityRepository
         }
     }
 
+
+    public function search(?string $search): array
+    {
+        $qb = $this->createQueryBuilder('p');
+        if ($search) {
+            // $qb->expr()->like('u.firstname', $qb->expr()->literal('Gui%'))
+            // $qb->orWhere("p.title LIKE %$search%")
+            // ->orWhere("p.content LIKE %$search%")
+            $qb->innerJoin('p.category', 'c');
+            $qb->orWhere($qb->expr()->like('p.title', $qb->expr()->literal('%'. $search .'%')));
+            $qb->orWhere($qb->expr()->like('p.content', $qb->expr()->literal('%'. $search .'%')));
+            $qb->orWhere($qb->expr()->like('c.title', $qb->expr()->literal('%'. $search .'%')));
+            // ->setParameter('search', $search)
+        }
+        return $qb->getQuery()
+        ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Post[] Returns an array of Post objects
 //     */
