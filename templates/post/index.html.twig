@@ -4,19 +4,30 @@
 	<h1>Liste des articles</h1>
 	<div class="my-3">
 		<hr>
-        <form method="get" class="d-flex">
-            <div class="m-3">
-                <input type="search" name="search" id="search" placeholder="Rechercher un article">
-            </div>
-            <div class="m-3">
-                <button class="btn btn-primary">Rechercher</button>
-            </div>
-        </form>
+		<form method="get" class="d-flex">
+			<div class="m-3">
+				<input type="search" name="search" id="search" placeholder="Rechercher un article">
+			</div>
+			<div class="m-3">
+				<button class="btn btn-primary">Rechercher</button>
+			</div>
+		</form>
 		<hr>
 	</div>
 
+	<div class="count">
+		<span class="text-success">{{ pagination.getTotalItemCount }}</span>
+		articles correspondent à votre recherche
+	</div>
+
+    <div class="d-flex justify-content-evenly">
+        <span>{{ knp_pagination_sortable(pagination, 'Id', 'id') }}</span>
+        <span>{{ knp_pagination_sortable(pagination, 'Titre', 'title') }}</span>
+        <span>{{ knp_pagination_sortable(pagination, 'Contenu', 'content') }}</span>
+        <span>{{ knp_pagination_sortable(pagination, 'Date de création', 'createdAt') }}</span>
+    </div>
 	<div class="d-flex flex-wrap justify-content-evenly">
-		{% for post in posts %}
+		{% for post in pagination %}
 			<div class="card m-3" style="width: 18rem;">
 				{% if post.picture %}
 					<img src={{ asset('assets/img/upload/' ~ post.picture) }} class="card-img-top" alt={{post.title}}>
@@ -31,5 +42,8 @@
 				</div>
 			</div>
 		{% endfor %}
+	</div>
+	<div class="navigation">
+		{{ knp_pagination_render(pagination) }}
 	</div>
 {% endblock %}

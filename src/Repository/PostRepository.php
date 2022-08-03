@@ -58,6 +58,14 @@ class PostRepository extends ServiceEntityRepository
         ;
     }
 
+
+    public function pagination (int $page, int $limit): array
+    {
+        return $this->createQueryBuilder('p')
+        ->setMaxResults($limit)
+        ->setFirstResult(1 + $limit * ($page -1))
+        ;
+    }
 //    /**
 //     * @return Post[] Returns an array of Post objects
 //     */

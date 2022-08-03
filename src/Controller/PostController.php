@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Post;
 use App\Form\PostType;
-use App\Repository\PostRepository;
 use App\Services\File\SaveFile;
-use DateTime;
+use App\Repository\PostRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,12 +25,17 @@ class PostController extends AbstractController
     }
 
     #[Route('/post', name: 'app_post', methods:['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
         $posts = $this->repository->search($request->query->get('search'));
+        $pagination = $paginator->paginate(
+            $posts,
+            $request->query->getInt('page', 1),
+            12
+        );
 
         return $this->render('post/index.html.twig', [
-            'posts' => $posts
+            'pagination' => $pagination
         ]);
     }
 
