@@ -64,6 +64,8 @@ class PostRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
         ->setMaxResults($limit)
         ->setFirstResult(1 + $limit * ($page -1))
+        ->getQuery()
+        ->getResult()
         ;
     }
 //    /**
