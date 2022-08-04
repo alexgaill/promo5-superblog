@@ -9,6 +9,15 @@
       "css": [
         "/build/app.css"
       ]
+    },
+    "index": {
+      "js": [
+        "/build/runtime.js",
+        "/build/index.js"
+      ],
+      "css": [
+        "/build/index.css"
+      ]
     }
   }
 }
