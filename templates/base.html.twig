@@ -48,7 +48,7 @@
 						</ul>
 					</div>
 					{% if app.user %}
-						<div {{react_component('UserComponent', {'userEmail': app.user.email, 'categories': posts})}}></div>
+						<div {{react_component('UserComponent', {'userEmail': app.user.email})}}></div>
 					{% endif %}
 				</div>
 			</nav>
